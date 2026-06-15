@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jarvis — Connected</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f6f3ec; --paper2:#efeae0; --card:#fffdf8; --card2:#fbf8f1;
+    --ink:#1c2530; --ink2:#33404e; --muted:#6c7785; --faint:#9aa4b0;
+    --line:#e5ddcf; --line2:#d8cfbd;
+    --teal:#0f6e63; --teal-d:#0b554c; --teal-soft:#e3efed;
+    --amber:#bf7d27; --amber-soft:#f6ecd9;
+    --indigo:#5a5fb0; --indigo-soft:#e9e9f6;
+    --green:#3f8a4f; --green-soft:#e6f1e7;
+    --red:#c0573f; --red-soft:#f7e7e1;
+    --grey:#8a93a0; --grey-soft:#edeae3;
+    --shadow:0 14px 34px -22px rgba(40,34,20,.45);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'Hanken Grotesk',sans-serif; color:var(--ink);
+    background:var(--paper); min-height:100vh; line-height:1.5; -webkit-font-smoothing:antialiased;
+    position:relative;
+  }
+  body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+    background:
+      radial-gradient(50% 40% at 92% -6%,rgba(191,125,39,.07),transparent 60%),
+      radial-gradient(46% 36% at 2% 104%,rgba(15,110,99,.06),transparent 60%);}
+  .wrap{position:relative;z-index:1;max-width:1140px;margin:0 auto;padding:30px 24px 80px}
+
+  /* top bar */
+  .topbar{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;flex-wrap:wrap;padding-bottom:20px;border-bottom:1px solid var(--line)}
+  .brand{display:flex;align-items:center;gap:14px}
+  .glyph{width:46px;height:46px;border-radius:13px;flex:none;position:relative;background:linear-gradient(150deg,var(--teal),var(--teal-d));box-shadow:0 8px 18px -8px rgba(15,110,99,.6),inset 0 1px 0 rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center}
+  .glyph span{font-family:'Fraunces',serif;font-weight:700;color:#fdf6e9;font-size:23px;line-height:1}
+  .glyph::after{content:"";position:absolute;width:7px;height:7px;border-radius:50%;background:var(--amber);right:8px;bottom:8px;box-shadow:0 0 8px 1px rgba(191,125,39,.6)}
+  .wordmark{font-family:'Fraunces',serif;font-weight:600;font-size:27px;letter-spacing:.01em;line-height:1}
+  .tagline{font-size:12.5px;color:var(--muted);margin-top:4px}
+  .firmtag{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;color:var(--faint);margin-top:4px;text-transform:uppercase}
+  .demo-pill{display:inline-block;margin-left:9px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.12em;color:var(--amber);border:1px solid #e3c891;background:var(--amber-soft);border-radius:20px;padding:2px 8px;vertical-align:middle}
+
+  .refresh-zone{display:flex;flex-direction:column;align-items:flex-end;gap:9px}
+  .asof{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--faint)}
+  .asof b{color:var(--muted);font-weight:500}
+  .refresh{display:inline-flex;align-items:center;gap:10px;cursor:pointer;font-family:inherit;font-size:14px;font-weight:600;color:#fdf6e9;background:linear-gradient(180deg,#13837560,#0f6e63);background:linear-gradient(180deg,var(--teal),var(--teal-d));border:none;border-radius:11px;padding:11px 20px;box-shadow:0 10px 22px -10px rgba(15,110,99,.7),inset 0 1px 0 rgba(255,255,255,.2);transition:transform .15s,box-shadow .2s}
+  .refresh:hover{transform:translateY(-1px);box-shadow:0 14px 28px -10px rgba(15,110,99,.8),inset 0 1px 0 rgba(255,255,255,.2)}
+  .refresh.spinning svg{animation:spin .9s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .refresh[disabled]{opacity:.75;cursor:wait}
+
+  /* stats */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:24px 0 8px}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:15px 18px;box-shadow:var(--shadow)}
+  .stat .k{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}
+  .stat .v{font-family:'Fraunces',serif;font-size:29px;font-weight:600;margin-top:6px;line-height:1;color:var(--ink)}
+  .stat .v small{font-size:13px;color:var(--muted);font-family:'Hanken Grotesk';font-weight:500}
+  .stat.teal .v{color:var(--teal)} .stat.amber .v{color:var(--amber)} .stat.red .v{color:var(--red)}
+
+  /* controls */
+  .controls{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin:22px 0 14px}
+  .filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .chip{font-size:12.5px;font-weight:500;color:var(--muted);background:var(--card);border:1px solid var(--line2);border-radius:30px;padding:6px 14px;cursor:pointer;transition:all .15s;font-family:inherit}
+  .chip:hover{color:var(--ink);border-color:var(--faint)}
+  .chip.active{background:var(--teal-soft);border-color:var(--teal);color:var(--teal-d);font-weight:600}
+  .toggle{display:inline-flex;align-items:center;gap:9px;font-size:13px;color:var(--ink2);cursor:pointer;user-select:none;margin-left:4px}
+  .switch{width:38px;height:21px;border-radius:20px;background:var(--line2);position:relative;transition:background .2s}
+  .switch i{position:absolute;top:2px;left:2px;width:17px;height:17px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:left .2s}
+  .toggle.on .switch{background:var(--teal)} .toggle.on .switch i{left:19px}
+  .sortwrap{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--faint)}
+  .sortbtn{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.05em;color:var(--muted);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:6px 11px;cursor:pointer}
+  .sortbtn.on{color:var(--teal-d);border-color:var(--teal);background:var(--teal-soft)}
+
+  /* opportunity cards */
+  #list{display:flex;flex-direction:column;gap:16px}
+  .opp{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:var(--shadow);opacity:0;transform:translateY(9px);animation:rise .5s ease forwards}
+  @keyframes rise{to{opacity:1;transform:none}}
+  .opp.dim{opacity:.62}
+  .opp-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;padding:18px 20px 15px;background:linear-gradient(180deg,var(--card2),var(--card));border-bottom:1px solid var(--line);flex-wrap:wrap}
+  .opp-id{flex:1;min-width:250px}
+  .opp-name{font-family:'Fraunces',serif;font-size:21px;font-weight:600;display:flex;align-items:center;gap:10px;flex-wrap:wrap;line-height:1.25}
+  .new{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.12em;color:var(--teal-d);border:1px solid #9fccc4;background:var(--teal-soft);border-radius:5px;padding:2px 6px}
+  .vchain{font-size:13px;color:var(--ink2);margin-top:6px}
+  .vchain b{color:var(--muted);font-weight:600}
+  .opp-cin{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--faint);margin-top:5px}
+  .opp-tags{display:flex;flex-direction:column;align-items:flex-end;gap:9px}
+  .stage{font-size:11px;font-weight:600;letter-spacing:.02em;padding:5px 11px;border-radius:7px;white-space:nowrap}
+  .stage.formg{color:var(--amber);background:var(--amber-soft);border:1px solid #e3c891}
+  .stage.cirp{color:var(--teal-d);background:var(--teal-soft);border:1px solid #9fccc4}
+  .stage.liq{color:var(--red);background:var(--red-soft);border:1px solid #e6b6a7}
+  .deadline{font-family:'JetBrains Mono',monospace;font-size:11px;display:flex;align-items:center;gap:6px;color:var(--muted)}
+  .dl-pill{padding:2px 8px;border-radius:20px;font-weight:700}
+  .dl-urgent{color:#fff;background:var(--red)} .dl-soon{color:#5a3a12;background:#e6c074} .dl-ok{color:var(--teal-d);background:var(--teal-soft)}
+  .formg-btn{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--teal-d);background:#fff;border:1px solid var(--teal);border-radius:8px;padding:6px 12px;text-decoration:none;transition:all .15s}
+  .formg-btn:hover{background:var(--teal);color:#fff}
+  .rp{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--faint);text-align:right}
+
+  .matches{padding:4px 20px 18px}
+  .mlabel{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);margin:14px 0 4px}
+  .match{display:flex;gap:18px;padding:15px 14px;border-radius:11px;margin-top:8px;border-left:3px solid var(--grey);background:var(--card2)}
+  .match.prime{border-left-color:var(--green);background:linear-gradient(90deg,var(--green-soft),var(--card2) 60%)}
+  .match.mixed{border-left-color:var(--amber)}
+  .match.cold{border-left-color:var(--grey);opacity:.9}
+  .m-left{flex:none;width:215px}
+  .m-buyer{font-weight:700;font-size:14.5px;line-height:1.3}
+  .fit{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:3px 9px;border-radius:6px;margin-top:8px}
+  .fit.Backward{color:var(--teal-d);background:var(--teal-soft)} .fit.Forward{color:var(--indigo);background:var(--indigo-soft)} .fit.Horizontal{color:var(--amber);background:var(--amber-soft)}
+  .score{display:flex;align-items:center;gap:9px;margin-top:11px}
+  .bar{flex:1;height:5px;border-radius:4px;background:var(--line2);overflow:hidden}
+  .bar i{display:block;height:100%;border-radius:4px;background:linear-gradient(90deg,var(--amber),var(--teal))}
+  .score b{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:var(--ink2)}
+  .m-right{flex:1;min-width:0}
+  .rat{font-size:13.5px;color:var(--ink2);line-height:1.55}
+  .gates{display:flex;gap:7px;flex-wrap:wrap;margin-top:11px}
+  .gate{font-size:10.5px;font-family:'JetBrains Mono',monospace;letter-spacing:.02em;padding:3px 9px;border-radius:6px;border:1px solid var(--line2);color:var(--muted);background:#fff;display:inline-flex;gap:6px;align-items:center}
+  .gate b{font-weight:700}
+  .gate.g-ok{border-color:#a9d3b1;color:var(--green);background:var(--green-soft)}
+  .gate.g-warn{border-color:#e3c891;color:var(--amber);background:var(--amber-soft)}
+  .gate.g-bad{border-color:#cdd2d8;color:var(--grey);background:var(--grey-soft)}
+  .verdict{margin-top:11px;font-size:13px;color:var(--ink2);line-height:1.5;border-top:1px dashed var(--line2);padding-top:10px}
+  .verdict b{font-weight:700}
+  .vlabel{display:inline-block;font-size:10.5px;font-family:'JetBrains Mono',monospace;letter-spacing:.04em;padding:2px 8px;border-radius:5px;margin-right:8px;font-weight:700}
+  .vlabel.prime{color:#fff;background:var(--green)} .vlabel.shortlist{color:#5a3a12;background:#e6c074} .vlabel.cold{color:#fff;background:var(--grey)}
+  .nomatch{padding:14px 0 4px;color:var(--faint);font-size:13.5px;font-style:italic}
+  .excluded{margin-top:10px;font-size:11.5px;color:var(--grey);background:var(--grey-soft);border:1px dashed var(--line2);border-radius:8px;padding:8px 11px;font-family:'JetBrains Mono',monospace;letter-spacing:.01em}
+
+  /* scan overlay */
+  .scan{position:fixed;inset:0;z-index:50;background:rgba(246,243,236,.86);backdrop-filter:blur(2px);display:none;align-items:center;justify-content:center;flex-direction:column;gap:18px}
+  .scan.show{display:flex}
+  .scanbar{width:260px;height:3px;border-radius:3px;background:var(--line2);overflow:hidden}
+  .scanbar i{display:block;height:100%;width:40%;background:linear-gradient(90deg,transparent,var(--teal),transparent);animation:scanmove 1.1s ease-in-out infinite}
+  @keyframes scanmove{0%{transform:translateX(-120%)}100%{transform:translateX(360%)}}
+  .scantxt{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--teal-d)}
+
+  .footnote{margin-top:30px;padding-top:18px;border-top:1px solid var(--line);font-size:12px;color:var(--faint);line-height:1.7}
+  .footnote b{color:var(--muted);font-weight:600}
+  .legend{display:flex;gap:18px;flex-wrap:wrap;margin:6px 0 12px;font-size:12px;color:var(--muted)}
+  .legend span{display:inline-flex;align-items:center;gap:7px}
+  .ld{width:11px;height:11px;border-radius:3px}
+  @media(max-width:720px){.stats{grid-template-columns:repeat(2,1fr)}.match{flex-direction:column;gap:10px}.m-left{width:auto}.refresh-zone{align-items:flex-start}}
+
+  .prov{display:flex;gap:11px;align-items:flex-start;background:var(--teal-soft);border:1px solid #9fccc4;border-radius:12px;padding:13px 16px;margin:22px 0 6px;font-size:13px;color:var(--teal-d);line-height:1.55}
+  .prov .live{flex:none;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.1em;color:#fff;background:var(--teal);border-radius:20px;padding:3px 10px;margin-top:1px}
+  .matchedon{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--faint);margin-top:9px}
+  .matchedon b{color:var(--teal-d);font-weight:600}
+  .dl-closed{color:#fff;background:var(--grey)}
+  .applicant{font-size:12px;color:var(--muted);margin-top:2px}
+
+.panels{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:2px 20px 4px}
+@media(max-width:680px){.panels{grid-template-columns:1fr}}
+.panel{background:var(--card2);border:1px solid var(--line);border-radius:11px;padding:13px 15px}
+.panel h4{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--teal-d);margin-bottom:9px;display:flex;align-items:center;gap:7px}
+.panel h4 .ic{width:6px;height:6px;border-radius:50%;background:var(--teal)}
+.prow{display:flex;justify-content:space-between;gap:10px;font-size:12.5px;padding:5px 0;border-top:1px solid var(--line)}
+.prow:first-of-type{border-top:none}
+.prow .lab{color:var(--muted);flex:none;max-width:52%}
+.prow .val{color:var(--ink);text-align:right;font-weight:500}
+.tag{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.03em;padding:2px 7px;border-radius:5px;font-weight:700;white-space:nowrap}
+.t-pending{color:var(--amber);background:var(--amber-soft);border:1px solid #e3c891}
+.t-sub{color:var(--indigo);background:var(--indigo-soft);border:1px solid #c3c8ef}
+.t-live{color:var(--teal-d);background:var(--teal-soft);border:1px solid #9fccc4}
+.t-locked{color:var(--grey);background:var(--grey-soft);border:1px solid #cdd2d8}
+
+.src{font-family:'JetBrains Mono',monospace;font-size:10.5px;display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border-radius:20px;margin-top:2px}
+.src .d{width:7px;height:7px;border-radius:50%}
+.src.snap{color:var(--amber);background:var(--amber-soft);border:1px solid #e3c891}
+.src.snap .d{background:var(--amber)}
+.src.live{color:var(--teal-d);background:var(--teal-soft);border:1px solid #9fccc4}
+.src.live .d{background:var(--green)}
+.hidden-note{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--faint);margin:2px 0 12px;padding-left:2px}
+.sortrow{display:flex;align-items:center;gap:8px;margin:4px 0 2px;flex-wrap:wrap}
+.sortlbl{font-size:12px;color:var(--faint)}
+.sortb{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.03em;color:var(--muted);background:var(--card);border:1px solid var(--line2);border-radius:8px;padding:6px 12px;cursor:pointer}
+.sortb.on{color:var(--teal-d);border-color:var(--teal);background:var(--teal-soft);font-weight:700}
+.stagechip{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.02em;padding:3px 10px;border-radius:7px;margin-left:8px;vertical-align:middle}
+.st-soon{color:#5a3a12;background:#f0c869;border:1px solid #d9a93f}
+.st-early{color:var(--muted);background:var(--grey-soft);border:1px solid var(--line2)}
+.st-liq{color:var(--red);background:#f7e7e1;border:1px solid #e6b6a7}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <div class="brand">
+      <div class="glyph"><span>J</span></div>
+      <div>
+        <div class="wordmark">Jarvis<span class="demo-pill" style="color:var(--teal-d);border-color:#9fccc4;background:var(--teal-soft)">CONNECTED</span></div>
+        <div class="tagline">Insolvency opportunity desk — match · Form G tracker · financial snapshot</div>
+        <div class="firmtag">K C Mehta &amp; Co · IBC Origination</div>
+      </div>
+    </div>
+    <div class="refresh-zone">
+      <div class="src snap" id="src"><span class="d"></span><span id="srctxt">loading…</span></div>
+      <button class="refresh" id="refreshBtn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg> Refresh</button>
+    </div>
+  </div>
+
+  <div class="prov">
+    <span class="live">● CONNECTED</span>
+    <div>This is the production dashboard. It tries to load your <b>live feed</b> (the <code>opportunities.json</code> your daily job publishes); until that URL is set it shows the <b>built-in snapshot</b> below — today's real run. Set <code>JSON_URL</code> in this file to your GitHub Pages address and the <b>Refresh</b> button will pull fresh matches automatically, every time.</div>
+  </div>
+
+  <div class="sortrow">
+    <span class="sortlbl">Sort:</span>
+    <button class="sortb on" id="sbBid">Days to bid · most&rarr;least</button>
+    <button class="sortb" id="sbFit">Best fit</button>
+  </div>
+  <div class="hidden-note" id="hiddenNote"></div>
+  <div id="list"></div>
+
+  <div class="footnote">
+    <b>How the data flows:</b> a free daily job scrapes the IBBI register, runs your rule-based match against the client master, and writes <code>opportunities.json</code>; this page fetches it. Form G shows a live countdown (issued ~75 days after admission — you're alerted on publish); financial figures marked "on subscription · MCA" need a paid data feed for real ₹. <b>Days to bid</b> is an estimate of runway to the Form G/EoI window (from the ~75-day timeline); it sharpens to the exact EoI deadline once Form G publishes. Targets and matches are real; nothing is fabricated.
+  </div>
+</div>
+<script>
+// ▼▼ Set this to your published feed to go live ▼▼
+const JSON_URL = "opportunities.json";  // co-located in this private repo
+const FALLBACK = [{"company": "DANALAKSHMI PAPER MILLS PRIVATE LIMITED", "isLiq": false, "stageLabel": "Corporate Insolvency Resolution Process", "stageClass": "cirp", "admit": "05-06-2026", "claimsBy": "16-06-2026", "claimsDays": 8, "formgBy": "19 Aug 2026", "applicant": "Arjun Saikumar", "rp": "Mr. Krishnasamy Vasudevan", "matches": [{"client": "Best Paper Mills Private Limited", "score": 30, "matched": ["board", "kraft", "packaging", "paper", "pulp"], "reach": "Indian promoter, reachable", "na": "Verify; no public distress indicators found.", "conf": "HIGH", "confClass": "g-ok", "naClass": "g-warn", "syn": "Backward: distressed waste-paper/pulp processors secure raw fibre. Forward: distressed corrugated-box plants give captive offtake. Horizontal: distressed kraft/MG paper mills add tonnage.", "barW": 77}, {"client": "Urvashi Pulp & Paper Mills Private Limited", "score": 29, "matched": ["board", "kraft", "packaging", "paper", "pulp"], "reach": "Indian promoter, reachable", "na": "Verify; appears operating and expanding, no public distress ", "conf": "HIGH", "confClass": "g-ok", "naClass": "g-warn", "syn": "Backward: distressed waste-paper / recovered-fibre processors. Horizontal: other distressed kraft-paper or core-board mills for capacity and geography. Forward: distressed paper-tube/core-pipe converters as captive offtakers.", "barW": 74}, {"client": "Century Textiles and Industries Limited", "score": 28, "matched": ["board", "packaging", "paper", "pulp"], "reach": "Indian promoter, reachable (Aditya Birla Group, Kumar Mangalam Birla)", "na": "Verify", "conf": "HIGH", "confClass": "g-ok", "naClass": "g-warn", "syn": "Horizontal: another integrated pulp and paper or paperboard mill (consolidation of capacity); Forward: real estate or packaging-conversion assets; Adjacency: distressed textile or yarn units near Birla Century.", "barW": 72}]}, {"company": "NEW PEARL VITRIFIED PRIVATE LIMITED", "isLiq": false, "stageLabel": "Corporate Insolvency Resolution Process", "stageClass": "cirp", "admit": "05-06-2026", "claimsBy": "16-06-2026", "claimsDays": 8, "formgBy": "19 Aug 2026", "applicant": "SHOORA", "rp": "Mr. Manish Santosh Buchasia", "matches": [{"client": "Asian Granito India Limited", "score": 26, "matched": ["ceramic", "sanitaryware", "tile", "vitrified"], "reach": "Indian promoter (Patel family), reachable.", "na": "Verify.", "conf": "HIGH", "confClass": "g-ok", "naClass": "g-warn", "syn": "Backward (body/glaze/frit), horizontal (tiles/quartz capacity), forward (retail/sanitaryware).", "barW": 67}, {"client": "Varmora Granito Private Limited", "score": 23, "matched": ["ceramic", "porcelain", "sanitaryware", "tile", "vitrified"], "reach": "Indian promoter, reachable", "na": "Verify; no public adverse signal found.", "conf": "HIGH", "confClass": "g-ok", "naClass": "g-warn", "syn": "Horizontal fit: distressed Morbi/Gujarat tile, sanitaryware or ceramic units (capacity and kilns). Backward fit: distressed body-clay, frit, glaze, ceramic-colour or natural-gas-dependent feedstock suppliers. Forward fit: tile distribution ", "barW": 59}, {"client": "Ravikiran Ceramics Private limited", "score": 20, "matched": ["ceramic", "porcelain", "sanitaryware", "tile"], "reach": "Indian promoter, reachable", "na": "Verify; active, returns filed to FY24; no public distress fl", "conf": "HIGH", "confClass": "g-ok", "naClass": "g-warn", "syn": "Horizontal: distressed electrical-porcelain or insulator units (capacity, product range). Backward: stressed clay/feldspar or specialty-ceramic raw-material processors. Forward: distressed fuse, switchgear or electrical-component makers usi", "barW": 51}]}, {"company": "MAIYAS RESTAURANTS PRIVATE LIMITED", "isLiq": false, "stageLabel": "Corporate Insolvency Resolution Process", "stageClass": "cirp", "admit": "03-06-2026", "claimsBy": "14-06-2026", "claimsDays": 6, "formgBy": "17 Aug 2026", "applicant": "HIGHWAY STAR REST AND RECREATION PRIVATE LIMITED", "rp": "Mr. Naresh Kumar Rohila", "matches": [{"client": "Spezia India Private Limited", "score": 19, "matched": ["beverage", "food", "hospitality", "restaurant"], "reach": "Indian promoter, reachable", "na": "Verify; no public distress basis found.", "conf": "MEDIUM", "confClass": "g-warn", "naClass": "g-warn", "syn": "Horizontal: distressed restaurant or QSR chains and outlets. Limited otherwise.", "barW": 49}, {"client": "Dharampal Satyapal Limited", "score": 18, "matched": ["beverage", "fmcg", "food", "hospitality"], "reach": "Indian promoter, reachable", "na": "Verify. Large solvent privately held group; no 29A concern i", "conf": "HIGH", "confClass": "g-ok", "naClass": "g-warn", "syn": "Horizontal: distressed spice/confectionery/beverage brands and snack makers. Backward: mint, spice-processing and flexible-packaging units. Forward: distribution and retail/HoReCa assets. Adjacency: hospitality and luxury-retail distressed ", "barW": 46}, {"client": "Nilamber Hospitality LLp", "score": 15, "matched": ["beverage", "food", "hospitality"], "reach": "Indian promoter, reachable", "na": "Verify; no public adverse basis found.", "conf": "MEDIUM", "confClass": "g-warn", "naClass": "g-warn", "syn": "Adjacency: a distressed hotel or food-and-beverage / retail-leisure asset could fit the group's mixed-use model.", "barW": 38}]}, {"company": "DEVKIRAN PAPER MILLS PRIVATE LIMITED", "isLiq": false, "stageLabel": "Corporate Insolvency Resolution Process", "stageClass": "cirp", "admit": "28-05-2026", "claimsBy": "08-06-2026", "claimsDays": 0, "formgBy": "11 Aug 2026", "applicant": "Valufocus Eco- Revive Packaging", "rp": "Rishabh Sethi", "matches": [{"client": "Best Paper Mills Private Limited", "score": 30, "matched": ["board", "kraft", "packaging", "paper", "pulp"], "reach": "Indian promoter, reachable", "na": "Verify; no public distress indicators found.", "conf": "HIGH", "confClass": "g-ok", "naClass": "g-warn", "syn": "Backward: distressed waste-paper/pulp processors secure raw fibre. Forward: distressed corrugated-box plants give captive offtake. Horizontal: distressed kraft/MG paper mills add tonnage.", "barW": 77}, {"client": "Urvashi Pulp & Paper Mills Private Limited", "score": 29, "matched": ["board", "kraft", "packaging", "paper", "pulp"], "reach": "Indian promoter, reachable", "na": "Verify; appears operating and expanding, no public distress ", "conf": "HIGH", "confClass": "g-ok", "naClass": "g-warn", "syn": "Backward: distressed waste-paper / recovered-fibre processors. Horizontal: other distressed kraft-paper or core-board mills for capacity and geography. Forward: distressed paper-tube/core-pipe converters as captive offtakers.", "barW": 74}, {"client": "Century Textiles and Industries Limited", "score": 28, "matched": ["board", "packaging", "paper", "pulp"], "reach": "Indian promoter, reachable (Aditya Birla Group, Kumar Mangalam Birla)", "na": "Verify", "conf": "HIGH", "confClass": "g-ok", "naClass": "g-warn", "syn": "Horizontal: another integrated pulp and paper or paperboard mill (consolidation of capacity); Forward: real estate or packaging-conversion assets; Adjacency: distressed textile or yarn units near Birla Century.", "barW": 72}]}, {"company": "VIBHA AGRO TECH LIMITED", "isLiq": true, "stageLabel": "Liquidation Process", "stageClass": "liq", "admit": "26-05-2026", "claimsBy": "21-06-2026", "claimsDays": 13, "formgBy": null, "applicant": "State Bank of India", "rp": "Dantu Indu Sekhar", "matches": [{"client": "Excel Genetics Limited", "score": 27, "matched": ["agri", "agro", "crop", "seed"], "reach": "Indian promoter, reachable", "na": "Verify", "conf": "MEDIUM", "confClass": "g-warn", "naClass": "g-warn", "syn": "Horizontal: distressed hybrid-seed companies (germplasm, distribution). Adjacency: agro-chemical or biotech firms (cross-sell to farmers). Backward: seed-processing/conditioning plants.", "barW": 69}, {"client": "UPL Limited", "score": 21, "matched": ["agri", "agro", "agrochemical", "crop", "seed"], "reach": "Indian promoter, reachable (Shroff family controls strategy).", "na": "Verify. No CIRP basis; UPL carries high debt and has been un", "conf": "HIGH", "confClass": "g-ok", "naClass": "g-warn", "syn": "Backward: agro-intermediate/technical-grade chemical makers (input cost and supply). Horizontal: regional crop-protection formulators or registrations portfolios (market access). Adjacency: seeds, biologicals and post-harvest assets (portfo", "barW": 54}, {"client": "Meghmani Industries Limited", "score": 20, "matched": ["agri", "agro", "agrochemical", "crop"], "reach": "Indian promoter, reachable", "na": "Verify. Part of established Meghmani group; no public distre", "conf": "HIGH", "confClass": "g-ok", "naClass": "g-warn", "syn": "Backward: basic-chemical/intermediate makers (Meghmani group already backward-integrated). Forward: branded agri-input distribution; textile dye houses. Horizontal: other agrochemical and dyestuff manufacturers consolidating capacity in Guj", "barW": 51}]}, {"company": "MARTINA BIO GENICS PRIVATE LIMITED", "isLiq": false, "stageLabel": "Corporate Insolvency Resolution Process", "stageClass": "cirp", "admit": "25-05-2026", "claimsBy": "05-06-2026", "claimsDays": -3, "formgBy": "08 Aug 2026", "applicant": "STATE BANK OF INDIA", "rp": "Mr. Jitendra Lohia", "matches": [{"client": "Cadila Pharmaceuticals Limited", "score": 34, "matched": ["api", "bio", "drug", "formulation", "intermediate", "pharma"], "reach": "Indian promoter, reachable", "na": "Verify; no public indication of default or CIRP.", "conf": "HIGH", "confClass": "g-ok", "naClass": "g-warn", "syn": "Backward: distressed API/KSM units (secure raw inputs). Horizontal: distressed formulation plants (capacity, WHO-GMP lines). Adjacency: distressed vaccine/biologics or nutraceutical assets.", "barW": 87}, {"client": "Parul Chemicals Limited", "score": 31, "matched": ["api", "bio", "drug", "formulation", "intermediate", "pharma"], "reach": "Indian promoter, reachable", "na": "Verify. Status Amalgamated; entity no longer independently o", "conf": "MEDIUM", "confClass": "g-warn", "naClass": "g-warn", "syn": "As a pharma-intermediate maker (if revived via successor): backward to basic-chemical feedstock, forward to API/formulation makers, horizontal with other fine-chemical intermediate producers. Otherwise not applicable.", "barW": 79}, {"client": "Zydus Lifesciences Limited", "score": 30, "matched": ["api", "bio", "formulation", "intermediate", "pharma"], "reach": "Indian promoter, reachable", "na": "Verify. No public distress basis; strong solvent group. Note", "conf": "HIGH", "confClass": "g-ok", "naClass": "g-warn", "syn": "Backward: distressed API/intermediate plants secure input cost. Horizontal: distressed Indian/US generic and branded-formulation portfolios add scale and ANDAs. Adjacency: distressed vaccine, biosimilar or animal-health units fit existing v", "barW": 77}]}, {"company": "JMV ISPAT PRIVATE LIMITED", "isLiq": false, "stageLabel": "Corporate Insolvency Resolution Process", "stageClass": "cirp", "admit": "24-05-2026", "claimsBy": "05-06-2026", "claimsDays": -3, "formgBy": "07 Aug 2026", "applicant": "Israr", "rp": "Ms. Hemi Gupta", "matches": [{"client": "Castings & Castings", "score": 22, "matched": ["casting", "iron", "steel"], "reach": "Indian promoter, reachable", "na": "Verify", "conf": "MEDIUM", "confClass": "g-warn", "naClass": "g-warn", "syn": "Horizontal: distressed iron/steel foundries in eastern India (capacity and casting range). Backward: pig iron/scrap processing (input cost). Forward: machining shops for finished castings.", "barW": 56}, {"client": "ISMT Limited", "score": 20, "matched": ["alloy", "forging", "iron", "steel"], "reach": "Indian promoter, reachable", "na": "ISMT itself faced earlier financial distress and lender stre", "conf": "HIGH", "confClass": "g-ok", "naClass": "g-warn", "syn": "Backward: distressed pig-iron, scrap or ferro-alloy suppliers feed the steel melt. Forward: distressed tube-finishing, drawing or precision-tube units add value. Horizontal: distressed seamless-tube or alloy-steel plants consolidate. Adjace", "barW": 51}, {"client": "Eco Phil Metals Private Limited", "score": 19, "matched": ["alloy", "iron", "steel"], "reach": "Indian promoter, reachable", "na": "Verify", "conf": "MEDIUM", "confClass": "g-warn", "naClass": "g-warn", "syn": "Backward fit with distressed non-ferrous smelting / lead and tin alloy units feeding Persang's solder business; horizontal fit with small distressed alloy or solder makers.", "barW": 49}]}, {"company": "SIDDHBALI STEELS & STRIPS PRIVATE LIMITED", "isLiq": true, "stageLabel": "Liquidation Process", "stageClass": "liq", "admit": "17-05-2026", "claimsBy": "11-06-2026", "claimsDays": 3, "formgBy": null, "applicant": "Rahuraj Steel Traders Private Limited", "rp": "NANDISH SUNILBHAI VIN", "matches": [{"client": "Castings & Castings", "score": 22, "matched": ["casting", "iron", "steel"], "reach": "Indian promoter, reachable", "na": "Verify", "conf": "MEDIUM", "confClass": "g-warn", "naClass": "g-warn", "syn": "Horizontal: distressed iron/steel foundries in eastern India (capacity and casting range). Backward: pig iron/scrap processing (input cost). Forward: machining shops for finished castings.", "barW": 56}, {"client": "ISMT Limited", "score": 20, "matched": ["alloy", "forging", "iron", "steel"], "reach": "Indian promoter, reachable", "na": "ISMT itself faced earlier financial distress and lender stre", "conf": "HIGH", "confClass": "g-ok", "naClass": "g-warn", "syn": "Backward: distressed pig-iron, scrap or ferro-alloy suppliers feed the steel melt. Forward: distressed tube-finishing, drawing or precision-tube units add value. Horizontal: distressed seamless-tube or alloy-steel plants consolidate. Adjace", "barW": 51}, {"client": "Eco Phil Metals Private Limited", "score": 19, "matched": ["alloy", "iron", "steel"], "reach": "Indian promoter, reachable", "na": "Verify", "conf": "MEDIUM", "confClass": "g-warn", "naClass": "g-warn", "syn": "Backward fit with distressed non-ferrous smelting / lead and tin alloy units feeding Persang's solder business; horizontal fit with small distressed alloy or solder makers.", "barW": 49}]}, {"company": "SSAGRI GROUP PRIVATE LIMITED", "isLiq": false, "stageLabel": "Corporate Insolvency Resolution Process", "stageClass": "cirp", "admit": "17-05-2026", "claimsBy": "29-05-2026", "claimsDays": -10, "formgBy": "31 Jul 2026", "applicant": "Union Bank of India", "rp": "P V B Sudhakararao", "matches": [{"client": "Excel Genetics Limited", "score": 27, "matched": ["agri", "agro", "crop", "seed"], "reach": "Indian promoter, reachable", "na": "Verify", "conf": "MEDIUM", "confClass": "g-warn", "naClass": "g-warn", "syn": "Horizontal: distressed hybrid-seed companies (germplasm, distribution). Adjacency: agro-chemical or biotech firms (cross-sell to farmers). Backward: seed-processing/conditioning plants.", "barW": 69}, {"client": "UPL Limited", "score": 21, "matched": ["agri", "agro", "agrochemical", "crop", "seed"], "reach": "Indian promoter, reachable (Shroff family controls strategy).", "na": "Verify. No CIRP basis; UPL carries high debt and has been un", "conf": "HIGH", "confClass": "g-ok", "naClass": "g-warn", "syn": "Backward: agro-intermediate/technical-grade chemical makers (input cost and supply). Horizontal: regional crop-protection formulators or registrations portfolios (market access). Adjacency: seeds, biologicals and post-harvest assets (portfo", "barW": 54}, {"client": "Meghmani Industries Limited", "score": 20, "matched": ["agri", "agro", "agrochemical", "crop"], "reach": "Indian promoter, reachable", "na": "Verify. Part of established Meghmani group; no public distre", "conf": "HIGH", "confClass": "g-ok", "naClass": "g-warn", "syn": "Backward: basic-chemical/intermediate makers (Meghmani group already backward-integrated). Forward: branded agri-input distribution; textile dye houses. Horizontal: other agrochemical and dyestuff manufacturers consolidating capacity in Guj", "barW": 51}]}, {"company": "ASWINIKRISHNAA TEXTILE PRIVATE LIMITED", "isLiq": false, "stageLabel": "Corporate Insolvency Resolution Process", "stageClass": "cirp", "admit": "16-05-2026", "claimsBy": "04-06-2026", "claimsDays": -4, "formgBy": "30 Jul 2026", "applicant": "Central Bank Of India Limited", "rp": "Dipti Narayan Mundra", "matches": [{"client": "Nandan Denim Limited", "score": 39, "matched": ["cotton", "denim", "fabric", "garment", "spinning", "textile", "yarn"], "reach": "Indian promoter, reachable (Chiripal / Patel family)", "na": "29A caution. Faced a Section 9 IBC petition by Louis Dreyfus", "conf": "HIGH", "confClass": "g-ok", "naClass": "g-warn", "syn": "Backward: distressed cotton spinning / yarn units (input integration). Horizontal: distressed denim or processing-house capacity. Forward: distressed garmenting units to move up the chain. As a target: denim consolidators may eye its integr", "barW": 100}, {"client": "Shankar Kapda Niryat P Limited", "score": 34, "matched": ["cotton", "fabric", "garment", "spinning", "textile", "yarn"], "reach": "Indian promoter, reachable", "na": "Verify", "conf": "MEDIUM", "confClass": "g-warn", "naClass": "g-warn", "syn": "Backward: distressed spinning or weaving mill (yarn/fabric supply). Horizontal: distressed textile/garment exporter (capacity and order-book consolidation).", "barW": 87}, {"client": "Arvind Limited", "score": 27, "matched": ["denim", "fabric", "garment", "spinning", "textile"], "reach": "Indian promoter (Lalbhai family), reachable.", "na": "Verify.", "conf": "HIGH", "confClass": "g-ok", "naClass": "g-warn", "syn": "Backward (spinning), horizontal (textile capacity), forward (garments/brands/retail), adjacency (technical textiles).", "barW": 69}]}];
+const GEN = "08 Jun 2026";
+let OPPS = [];
+let sortMode = "bid";   // "bid" = days to bid, most -> least ; "fit" = best fit
+const MON={jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11};
+function parseDMY(s){
+  if(!s) return null;
+  const p=String(s).trim().split(/\s+/); if(p.length<3) return null;
+  const d=+p[0], m=MON[p[1].slice(0,3).toLowerCase()], y=+p[2];
+  if(isNaN(d)||m===undefined||isNaN(y)) return null;
+  return new Date(y,m,d);
+}
+let REF = parseDMY(GEN) || new Date();
+// estimated days of runway until the buyer's bid window (Form G/EoI). Estimated from
+// the expected Form G date (~75 days after admission) until Form G is actually published.
+function bidDays(o){ if(o.isLiq) return null; const fg=parseDMY(o.formgBy); if(!fg) return null; return Math.round((fg-REF)/86400000); }
+
+function dlClass(d){if(d===null)return"dl-ok";if(d<0)return"dl-closed";return d<=5?"dl-urgent":d<=12?"dl-soon":"dl-ok";}
+function dlText(o){if(o.claimsDays===null)return o.claimsBy;if(o.claimsDays<0)return"claims closed · "+o.claimsBy;return o.claimsDays+"d · claims by "+o.claimsBy;}
+function formgPanel(o){
+  if(o.isLiq){
+    return `<div class="panel"><h4><span class="ic"></span>Process &amp; entry route</h4>
+      <div class="prow"><span class="lab">Stage</span><span class="val">Liquidation</span></div>
+      <div class="prow"><span class="lab">Acquisition route</span><span class="val">Asset sale via e-auction</span></div>
+      <div class="prow"><span class="lab">Auction notice</span><span class="val"><span class="tag t-pending">AWAITED · ALERTED</span></span></div>
+      <div class="prow"><span class="lab">Liquidator</span><span class="val">${o.rp}</span></div></div>`;
+  }
+  return `<div class="panel"><h4><span class="ic"></span>Form G / process tracker</h4>
+    <div class="prow"><span class="lab">Stage</span><span class="val">CIRP admitted · ${o.admit}</span></div>
+    <div class="prow"><span class="lab">Form G (your entry)</span><span class="val"><span class="tag t-pending">PENDING</span></span></div>
+    <div class="prow"><span class="lab">Expected by (≈75d)</span><span class="val">~ ${o.formgBy||'—'}</span></div>
+    <div class="prow"><span class="lab">On publish</span><span class="val">Jarvis alerts you</span></div>
+    <div class="prow"><span class="lab">EoI contact</span><span class="val">${o.rp}</span></div></div>`;
+}
+function finPanel(o){
+  const cs = (o.claimsDays!==null && o.claimsDays<0) ? "collating (window closed)" : "collating (window open)";
+  return `<div class="panel"><h4><span class="ic"></span>Financial snapshot</h4>
+    <div class="prow"><span class="lab">Lead applicant / creditor</span><span class="val">${o.applicant||'—'}</span></div>
+    <div class="prow"><span class="lab">Total admitted claims</span><span class="val"><span class="tag t-live">${cs}</span></span></div>
+    <div class="prow"><span class="lab">Revenue · net worth · debt</span><span class="val"><span class="tag t-sub">ON SUBSCRIPTION · MCA</span></span></div>
+    <div class="prow"><span class="lab">Liquidation vs GC value</span><span class="val"><span class="tag t-locked">IN IM · ON EoI</span></span></div></div>`;
+}
+function stageInfo(o){
+  if(o.isLiq) return {key:"liq", label:"Liquidation · auction route", cls:"st-liq"};
+  if(o.claimsDays!==null && o.claimsDays>=0) return {key:"early", label:"Early stage · claims open", cls:"st-early"};
+  return {key:"soon", label:"Form G approaching", cls:"st-soon"};
+}
+function render(){
+  let rows=OPPS.slice();
+  if(sortMode==="bid"){
+    rows.sort((a,b)=>{ const va=(bidDays(a)===null?-1:bidDays(a)), vb=(bidDays(b)===null?-1:bidDays(b)); return vb-va; }); // most days first; liquidation/unknown last
+  } else {
+    rows.sort((a,b)=> Math.max(...b.matches.map(m=>m.score)) - Math.max(...a.matches.map(m=>m.score)));
+  }
+  let soon=0, early=0, liq=0;
+  rows.forEach(o=>{const k=stageInfo(o).key; if(k==='soon')soon++; else if(k==='early')early++; else liq++;});
+  const hn=document.getElementById('hiddenNote');
+  if(hn) hn.innerHTML = `Showing all ${rows.length} · sorted by <b>${sortMode==='bid'?'days to bid (most&rarr;least)':'best fit'}</b> &nbsp;·&nbsp; <b style="color:var(--amber)">${soon} approaching Form G</b> · ${early} early-stage · ${liq} liquidation`;
+  if(!rows.length){document.getElementById('list').innerHTML='<div class="opp" style="padding:30px;text-align:center;color:var(--faint)">No matched opportunities right now.</div>';return;}
+  document.getElementById('list').innerHTML=rows.map((o,i)=>`
+    <div class="opp" style="animation-delay:${i*55}ms">
+      <div class="opp-head">
+        <div class="opp-id">
+          <div class="opp-name">${o.company} <span class="stagechip ${stageInfo(o).cls}">${stageInfo(o).label}${o.isLiq?'':(bidDays(o)!==null?' · ~'+bidDays(o)+'d to bid':'')}</span></div>
+          <div class="vchain"><b>Sector (inferred from name) ·</b> matched to your client book below</div>
+          <div class="applicant">Applicant: ${o.applicant}</div>
+        </div>
+        <div class="opp-tags">
+          <span class="stage ${o.stageClass}">${o.stageLabel}</span>
+          <span class="deadline">Claims <span class="dl-pill ${dlClass(o.claimsDays)}">${dlText(o)}</span></span>
+          <a class="formg-btn" href="https://www.ibbi.gov.in/en/public-announcement" target="_blank" rel="noopener">Find on IBBI ↗</a>
+          <span class="rp">${o.rp}</span>
+        </div>
+      </div>
+      <div class="panels">${formgPanel(o)}${finPanel(o)}</div>
+      <div class="matches">
+        <div class="mlabel">Matched clients · ${o.matches.length} (ranked by rule-based fit)</div>
+        ${o.matches.map(m=>`
+          <div class="match ${m.confClass==='g-ok'?'prime':m.confClass==='g-warn'?'mixed':'cold'}">
+            <div class="m-left">
+              <div class="m-buyer">${m.client}</div>
+              <div class="score"><div class="bar"><i style="width:${m.barW||Math.min(100,m.score*2.5)}%"></i></div><b>${m.score}</b></div>
+              <div class="matchedon"><b>matched on:</b> ${(m.matched||[]).join(', ')}</div>
+            </div>
+            <div class="m-right">
+              <div class="rat">${m.syn}${(m.syn||'').length>=235?'…':''}</div>
+              <div class="gates">
+                <span class="gate ${m.naClass||'g-warn'}">29A <b>${m.na}</b></span>
+                <span class="gate g-ok">KCM reach <b>${m.reach}</b></span>
+                <span class="gate ${m.confClass||'g-warn'}">Data <b>${m.conf}</b></span>
+              </div>
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>`).join('');
+}
+function setSrc(live, when){
+  const el=document.getElementById('src'), t=document.getElementById('srctxt');
+  if(live){el.className='src live'; t.textContent='Live feed · '+when;}
+  else{el.className='src snap'; t.textContent='Built-in snapshot ('+GEN+') · set JSON_URL to go live';}
+}
+async function load(){
+  try{
+    const r=await fetch(JSON_URL,{cache:"no-store"});
+    if(!r.ok) throw new Error("http");
+    const j=await r.json();
+    OPPS=j.opportunities||j; REF=parseDMY(j.generated)||REF; setSrc(true, j.generated||""); render();
+  }catch(e){
+    OPPS=FALLBACK; REF=parseDMY(GEN)||new Date(); setSrc(false); render();
+  }
+}
+document.getElementById('sbBid').onclick=()=>{sortMode='bid';document.getElementById('sbBid').classList.add('on');document.getElementById('sbFit').classList.remove('on');render();};
+document.getElementById('sbFit').onclick=()=>{sortMode='fit';document.getElementById('sbFit').classList.add('on');document.getElementById('sbBid').classList.remove('on');render();};
+document.getElementById('refreshBtn').onclick=()=>{const b=document.getElementById('refreshBtn');b.classList.add('spinning');b.disabled=true;load().finally(()=>{b.classList.remove('spinning');b.disabled=false;});};
+load();
+</script>
+
+</body>
+</html>

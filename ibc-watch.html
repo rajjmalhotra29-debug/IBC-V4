@@ -1,0 +1,217 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>IBC Watch · K C Mehta & Co</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,600&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+ --paper:#FAF7F1; --card:#FFFFFF; --ink:#15302b; --muted:#5d6b66; --faint:#94a09b; --line:#e8e3d7; --line2:#d8d2c4;
+ --teal:#1f7a6b; --teal-d:#163f37; --teal-soft:#e4f0ec; --teal-line:#a8ccc3;
+ --amber:#bd7f17; --amber-soft:#f6ecd5; --amber-line:#e0c489;
+ --indigo:#4a4fae; --indigo-soft:#e9eaf7;
+ --liq:#b1502c; --liq-soft:#f6e6df; --liq-line:#e3b6a5;
+ --green:#2f9e57;
+}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font-family:'Hanken Grotesk',system-ui,sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased}
+.mono{font-family:'JetBrains Mono',monospace}
+a{color:inherit}
+.wrap{max-width:1080px;margin:0 auto;padding:0 26px}
+
+/* nav */
+.nav{position:sticky;top:0;z-index:40;background:rgba(250,247,241,.86);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.nav .row{display:flex;align-items:center;justify-content:space-between;height:62px;max-width:1080px;margin:0 auto;padding:0 26px}
+.brand{display:flex;align-items:center;gap:11px}
+.brand .mk{width:34px;height:34px;border-radius:8px;background:linear-gradient(150deg,var(--teal),var(--teal-d));display:grid;place-items:center;color:#fff;font-family:'Fraunces',serif;font-weight:600;font-size:18px;position:relative}
+.brand .mk:after{content:"";position:absolute;right:6px;bottom:6px;width:5px;height:5px;border-radius:50%;background:var(--amber)}
+.brand b{font-family:'Fraunces',serif;font-weight:600;font-size:17px;letter-spacing:.01em}
+.brand span{display:block;font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.18em;color:var(--faint);text-transform:uppercase;margin-top:1px}
+.nlinks{display:flex;align-items:center;gap:7px}
+.nlinks a{font-size:13.5px;color:var(--muted);text-decoration:none;padding:8px 12px;border-radius:7px}
+.nlinks a:hover{color:var(--ink);background:#fff}
+.nlinks a.cta{background:var(--teal-d);color:#fff;font-weight:600}
+.nlinks a.cta:hover{background:var(--teal)}
+@media(max-width:620px){.nlinks a.ghost{display:none}}
+
+/* hero */
+.hero{padding:78px 0 30px}
+.eyebrow{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--teal);margin-bottom:20px;display:inline-flex;align-items:center;gap:9px}
+.eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--teal);box-shadow:0 0 0 4px var(--teal-soft)}
+h1{font-family:'Fraunces',serif;font-weight:600;font-size:clamp(34px,6vw,60px);line-height:1.04;letter-spacing:-.015em;max-width:14ch}
+h1 em{font-style:italic;color:var(--teal-d)}
+.sub{font-size:clamp(16px,2.4vw,19px);color:var(--muted);max-width:60ch;margin-top:22px}
+.ctas{display:flex;flex-wrap:wrap;gap:13px;margin-top:30px}
+.btn{display:inline-flex;align-items:center;gap:9px;font-size:15px;font-weight:600;padding:13px 22px;border-radius:11px;text-decoration:none;border:1px solid transparent;transition:.16s}
+.btn.primary{background:var(--teal-d);color:#fff}
+.btn.primary:hover{background:var(--teal);transform:translateY(-1px)}
+.btn.ghost{background:#fff;border-color:var(--line2);color:var(--ink)}
+.btn.ghost:hover{border-color:var(--teal);color:var(--teal-d)}
+.btn .ar{transition:transform .16s}.btn:hover .ar{transform:translateX(3px)}
+
+/* ticker */
+.tickwrap{margin-top:54px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:linear-gradient(#fff,#fdfbf6);overflow:hidden}
+.ticklabel{max-width:1080px;margin:0 auto;padding:11px 26px 0;font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--faint);display:flex;align-items:center;gap:8px}
+.ticklabel .live{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px #d5efe0;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.tickrow{display:flex;gap:0;padding:13px 0 15px;width:max-content;animation:scroll 60s linear infinite}
+.tickwrap:hover .tickrow{animation-play-state:paused}
+@keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.tk{display:inline-flex;align-items:center;gap:9px;margin:0 12px;font-size:13px;white-space:nowrap;color:var(--ink)}
+.tk .pip{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;letter-spacing:.04em;padding:2px 7px;border-radius:5px}
+.tk .pip.c{color:var(--teal-d);background:var(--teal-soft)}
+.tk .pip.l{color:var(--liq);background:var(--liq-soft)}
+.tk .sep{color:var(--line2)}
+
+/* sections */
+.sec{padding:72px 0}
+.sec-eye{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--faint);margin-bottom:14px}
+.sec h2{font-family:'Fraunces',serif;font-weight:600;font-size:clamp(26px,4vw,38px);letter-spacing:-.01em;max-width:18ch}
+.sec .lede{color:var(--muted);max-width:56ch;margin-top:14px;font-size:16px}
+
+/* product split */
+.split{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:38px}
+@media(max-width:740px){.split{grid-template-columns:1fr}}
+.prod{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:30px 28px;display:flex;flex-direction:column}
+.prod.paid{border-color:var(--teal-line);box-shadow:0 18px 40px -28px rgba(22,63,55,.45)}
+.tier{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;padding:4px 10px;border-radius:6px;align-self:flex-start;margin-bottom:16px}
+.tier.free{color:var(--muted);background:#f1ede3;border:1px solid var(--line2)}
+.tier.sub{color:var(--teal-d);background:var(--teal-soft);border:1px solid var(--teal-line)}
+.prod h3{font-family:'Fraunces',serif;font-weight:600;font-size:26px}
+.prod .pdesc{color:var(--muted);font-size:14.5px;margin-top:8px;min-height:44px}
+.flist{list-style:none;margin:20px 0 26px;display:flex;flex-direction:column;gap:11px}
+.flist li{display:flex;gap:11px;font-size:14.5px;align-items:flex-start}
+.flist li svg{flex:none;margin-top:3px}
+.flist li.off{color:var(--faint)}
+.prod .btn{margin-top:auto;justify-content:center}
+
+/* how */
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:40px}
+@media(max-width:740px){.steps{grid-template-columns:1fr 1fr}}
+@media(max-width:430px){.steps{grid-template-columns:1fr}}
+.step .n{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--teal);border-bottom:1px solid var(--teal-line);padding-bottom:8px;margin-bottom:13px;display:block}
+.step h4{font-family:'Fraunces',serif;font-weight:600;font-size:18px;margin-bottom:6px}
+.step p{font-size:13.5px;color:var(--muted)}
+
+/* footer */
+footer{border-top:1px solid var(--line);padding:40px 0 56px;margin-top:30px}
+.fnote{font-size:12.5px;color:var(--faint);max-width:74ch;line-height:1.65}
+.fnote b{color:var(--muted)}
+.frow{display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:22px;align-items:center}
+
+/* IBC Watch tool */
+.tool-head{padding:40px 0 8px}
+.tool-head h1{font-size:clamp(28px,5vw,42px)}
+.searchbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:26px}
+.search{flex:1;min-width:220px;display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line2);border-radius:11px;padding:11px 15px}
+.search:focus-within{border-color:var(--teal);box-shadow:0 0 0 3px var(--teal-soft)}
+.search input{border:none;outline:none;font:inherit;font-size:15px;width:100%;background:transparent;color:var(--ink)}
+.chips{display:flex;gap:8px}
+.chip{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.04em;padding:9px 14px;border-radius:9px;border:1px solid var(--line2);background:#fff;color:var(--muted);cursor:pointer}
+.chip.on{background:var(--teal-d);color:#fff;border-color:var(--teal-d)}
+.count{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--faint);margin:18px 0 4px}
+.list{display:flex;flex-direction:column;gap:12px;padding-bottom:8px}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 22px;display:flex;justify-content:space-between;gap:18px;align-items:flex-start;transition:.14s}
+.card:hover{border-color:var(--teal-line);box-shadow:0 12px 30px -24px rgba(22,63,55,.4)}
+.card .nm{font-family:'Fraunces',serif;font-weight:600;font-size:19px;letter-spacing:-.005em}
+.card .meta{font-size:13px;color:var(--muted);margin-top:5px}
+.card .meta .k{color:var(--faint)}
+.right{display:flex;flex-direction:column;align-items:flex-end;gap:9px;flex:none}
+.badge{font-family:'JetBrains Mono',monospace;font-size:9.5px;font-weight:700;letter-spacing:.04em;padding:3px 9px;border-radius:6px;white-space:nowrap}
+.badge.c{color:var(--teal-d);background:var(--teal-soft);border:1px solid var(--teal-line)}
+.badge.l{color:var(--liq);background:var(--liq-soft);border:1px solid var(--liq-line)}
+.badge.p{color:var(--indigo);background:var(--indigo-soft);border:1px solid #c5c9ef}
+.claims{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);background:var(--amber-soft);border:1px solid var(--amber-line);padding:3px 9px;border-radius:6px;white-space:nowrap}
+.viewibbi{font-size:12.5px;color:var(--teal-d);text-decoration:none;font-weight:600}
+.viewibbi:hover{text-decoration:underline}
+.upsell{margin:30px 0 8px;background:linear-gradient(135deg,var(--teal-d),var(--teal));border-radius:18px;padding:30px 30px;color:#fff;display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap}
+.upsell h3{font-family:'Fraunces',serif;font-weight:600;font-size:24px;max-width:24ch}
+.upsell p{font-size:14px;opacity:.9;margin-top:7px;max-width:46ch}
+.upsell .btn{background:#fff;color:var(--teal-d)}
+.upsell .btn:hover{background:var(--paper)}
+.empty{padding:40px;text-align:center;color:var(--faint);font-size:14px}
+
+:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+@media(prefers-reduced-motion:reduce){.tickrow{animation:none}.eyebrow .dot,.ticklabel .live{animation:none}}
+</style></head><body>
+<nav class="nav"><div class="row">
+  <a class="brand" href="index.html" style="text-decoration:none">
+    <div class="mk">K</div>
+    <div><b>K C Mehta &amp; Co</b><span>IBC Deal Desk</span></div>
+  </a>
+  <div class="nlinks">
+    <a class="ghost" href="ibc-watch.html">IBC Watch</a>
+    <a class="ghost" href="index.html#jarvis">Jarvis</a>
+    <a class="cta" href="mailto:ibc@kcmehta.com?subject=Jarvis%20access%20request">Request access</a>
+  </div>
+</div></nav>
+<header class="tool-head"><div class="wrap">
+  <div class="eyebrow"><span class="dot"></span>Free tool</div>
+  <h1>IBC Watch</h1>
+  <p class="sub">A live, searchable list of companies entering insolvency on the IBBI public register. Updated daily.</p>
+  <div class="searchbar">
+    <label class="search"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#94a09b" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <input id="q" placeholder="Search company, professional, applicant…" autocomplete="off"></label>
+    <div class="chips">
+      <button class="chip on" data-f="all">All</button>
+      <button class="chip" data-f="cirp">CIRP</button>
+      <button class="chip" data-f="liq">Liquidation</button>
+    </div>
+  </div>
+  <div class="count" id="count"></div>
+</div></header>
+
+<main class="wrap"><div class="list" id="list"></div>
+
+  <div class="upsell">
+    <div>
+      <h3>Want these matched to the companies you'd actually buy?</h3>
+      <p>Jarvis scores every admission against your acquisition thesis, ranks them by time-to-bid, and alerts you when the window opens.</p>
+    </div>
+    <a class="btn" href="mailto:ibc@kcmehta.com?subject=Jarvis%20access%20request">Request Jarvis access <span class="ar">→</span></a>
+  </div>
+</main>
+
+<footer><div class="wrap">
+  <div class="frow">
+    <a class="brand" href="index.html" style="text-decoration:none"><div class="mk">K</div><div><b>K C Mehta &amp; Co</b><span>IBC Deal Desk</span></div></a>
+    <div class="nlinks"><a class="ghost" href="index.html">Home</a><a class="cta" href="mailto:ibc@kcmehta.com?subject=Jarvis%20access%20request">Request access</a></div>
+  </div>
+  <p class="fnote"><b>Source &amp; disclaimer.</b> Listings are drawn from the IBBI public-announcement register (ibbi.gov.in) and shown for information only. The “claims by” date is the deadline for creditors to submit claims, not a deadline for prospective buyers. Verify all details against the official record. Not an offer or investment, legal, or financial advice. © K C Mehta &amp; Co LLP.</p>
+</div></footer>
+
+<script>
+const FALLBACK=[{"type": "Corporate Insolvency Resolution Process", "date": "14-06-2026", "last": "26-06-2026", "company": "NIRVIKAR FILMS LLP", "applicant": "Zenith Media Scope Private Limited", "rp": "LOVENEET HANDA"}, {"type": "Corporate Insolvency Resolution Process", "date": "13-06-2026", "last": "25-06-2026", "company": "SHANTI INFRACONSTRUCT PRIVATE LIMITED", "applicant": "SHANTI INFRACONSTRUCT PRIVATE LIMITED", "rp": "Mr. Vinay Kumar Singhal"}, {"type": "Corporate Insolvency Resolution Process", "date": "13-06-2026", "last": "26-06-2026", "company": "HK TOLL ROAD PRIVATE LIMITED", "applicant": "HK Toll Road Private Limited", "rp": "Mr. Sanjay Kumar Mishra"}, {"type": "Corporate Insolvency Resolution Process", "date": "13-06-2026", "last": "25-06-2026", "company": "RVD SALES PRIVATE LIMITED", "applicant": "Hiveloop Capital Private Limited", "rp": "Mr. Rajeev Bhambri"}, {"type": "Corporate Insolvency Resolution Process", "date": "12-06-2026", "last": "24-06-2026", "company": "ARELI COMMERCE PRIVATE LIMITED", "applicant": "Standard Capital Markets Limited", "rp": "VARUN ANIL CHOPRA"}, {"type": "Corporate Insolvency Resolution Process", "date": "12-06-2026", "last": "26-06-2026", "company": "MOGUIRE VIRAGO PRIVATE LIMITED", "applicant": "ECSO Global Private Limited", "rp": "RAGHU RAJA H"}, {"type": "Corporate Insolvency Resolution Process", "date": "12-06-2026", "last": "23-06-2026", "company": "APL METALS LIMITED", "applicant": "Indian Bank", "rp": "Mr. Santanu Brahma"}, {"type": "Corporate Insolvency Resolution Process", "date": "12-06-2026", "last": "24-06-2026", "company": "OSWAL OVERSEAS LIMITED", "applicant": "L H SUGAR FACTORIES LIMITED", "rp": "Mansij Arya"}, {"type": "Corporate Insolvency Resolution Process", "date": "08-06-2026", "last": "19-06-2026", "company": "PRIMEZONE DEVELOPERS PRIVATE LIMITED", "applicant": "Sandeep Turan", "rp": "Mr. Hemanshu Jetley"}, {"type": "Corporate Insolvency Resolution Process", "date": "08-06-2026", "last": "19-06-2026", "company": "BLACKBERRY OVERSEAS PRIVATE LIMITED", "applicant": "KARNATAKA BANK LIMITED", "rp": "Bhavna Bansal"}, {"type": "Corporate Insolvency Resolution Process", "date": "06-06-2026", "last": "19-06-2026", "company": "INODAYA FOODS PRIVATE LIMITED", "applicant": "Dakshesh Divyakant Desai, Prop Dwarkesh Trading Co.", "rp": "Mr. Ashok Kumar Gupta"}, {"type": "Corporate Insolvency Resolution Process", "date": "06-06-2026", "last": "18-06-2026", "company": "ATTHARV SAI FLEXIPACK PRIVATE LIMITED", "applicant": "Super India Transport Corporation", "rp": "Nilesh Kothari"}, {"type": "Corporate Insolvency Resolution Process", "date": "06-06-2026", "last": "17-06-2026", "company": "BLD METAL AND ALLOYS PRIVATE LIMITED", "applicant": "UJJIVAN SMALL FINANCE BANK LTD.", "rp": "Mr. Sumit Shukla"}, {"type": "Corporate Insolvency Resolution Process", "date": "06-06-2026", "last": "17-06-2026", "company": "CREDITSAVVY TECHNOLOGIES PRIVATE LIMITED", "applicant": "TEKLLIBRIUM SOLUTIONS PRIVATE LIMITED", "rp": "Bhavna Bansal"}, {"type": "Corporate Insolvency Resolution Process", "date": "06-06-2026", "last": "06-06-2026", "company": "EARTH TOWNE INFRASTRUCTURES PRIVATE LIMITED", "applicant": "Satyabrata Mitra", "rp": "Mr. Rajiv Bajaj"}, {"type": "Corporate Insolvency Resolution Process", "date": "06-06-2026", "last": "19-06-2026", "company": "RIDLEY LIFE SCIENCE PRIVATE LIMITED", "applicant": "Axis Bank Limited", "rp": "Mr. Ashish Singh"}, {"type": "Corporate Insolvency Resolution Process", "date": "05-06-2026", "last": "16-06-2026", "company": "NEW PEARL VITRIFIED PRIVATE LIMITED", "applicant": "SHOORA", "rp": "Mr. Manish Santosh Buchasia"}, {"type": "Corporate Insolvency Resolution Process", "date": "05-06-2026", "last": "16-06-2026", "company": "DANALAKSHMI PAPER MILLS PRIVATE LIMITED", "applicant": "Arjun Saikumar", "rp": "Mr. Krishnasamy Vasudevan"}, {"type": "Liquidation Process", "date": "05-06-2026", "last": "24-06-2026", "company": "DKM AGENCIES PRIVATE LIMITED", "applicant": "Intec Capital Limited", "rp": "Mr.Sachit Soni"}, {"type": "Corporate Insolvency Resolution Process", "date": "03-06-2026", "last": "14-06-2026", "company": "MAIYAS RESTAURANTS PRIVATE LIMITED", "applicant": "HIGHWAY STAR REST AND RECREATION PRIVATE LIMITED", "rp": "Mr. Naresh Kumar Rohila"}, {"type": "Corporate Insolvency Resolution Process", "date": "03-06-2026", "last": "15-06-2026", "company": "THIRANI INDUSTRIES LIMITED", "applicant": "KNK SHIP MANAGEMENT", "rp": "Ms. Reshma Mittal"}, {"type": "Corporate Insolvency Resolution Process", "date": "28-05-2026", "last": "08-06-2026", "company": "DEVKIRAN PAPER MILLS PRIVATE LIMITED", "applicant": "Valufocus Eco- Revive Packaging", "rp": "Rishabh Sethi"}, {"type": "Liquidation Process", "date": "26-05-2026", "last": "21-06-2026", "company": "VIBHA AGRO TECH LIMITED", "applicant": "State Bank of India", "rp": "Dantu Indu Sekhar"}, {"type": "Corporate Insolvency Resolution Process", "date": "25-05-2026", "last": "05-06-2026", "company": "MARTINA BIO GENICS PRIVATE LIMITED", "applicant": "STATE BANK OF INDIA", "rp": "Mr. Jitendra Lohia"}];
+let DATA=FALLBACK, filter='all', q='';
+function kind(t){return /liquidation/i.test(t)?'liq':/pre-?pack/i.test(t)?'pre':'cirp';}
+function badge(t){const k=kind(t);return k==='liq'?'<span class="badge l">LIQUIDATION</span>':k==='pre'?'<span class="badge p">PRE-PACK</span>':'<span class="badge c">CIRP</span>';}
+function render(){
+  const term=q.trim().toLowerCase();
+  const rows=DATA.filter(x=>{
+    const k=kind(x.type);
+    const fok = filter==='all' || (filter==='liq'&&k==='liq') || (filter==='cirp'&&k!=='liq');
+    const tok = !term || (x.company+ ' '+x.rp+' '+x.applicant).toLowerCase().includes(term);
+    return fok && tok;
+  });
+  document.getElementById('count').textContent = rows.length+' of '+DATA.length+' listings'+(term?` matching “${q}”`:'');
+  const L=document.getElementById('list');
+  if(!rows.length){L.innerHTML='<div class="empty">No listings match. Try clearing the search or filter.</div>';return;}
+  L.innerHTML=rows.map(x=>`
+    <div class="card">
+      <div>
+        <div class="nm">${x.company}</div>
+        <div class="meta"><span class="k">Insolvency professional:</span> ${x.rp||'—'} &nbsp;·&nbsp; <span class="k">Applicant:</span> ${x.applicant||'—'}</div>
+      </div>
+      <div class="right">
+        ${badge(x.type)}
+        <span class="claims">claims by ${x.last||'—'}</span>
+        <a class="viewibbi" href="https://www.ibbi.gov.in/en/public-announcement" target="_blank" rel="noopener">View on IBBI ↗</a>
+      </div>
+    </div>`).join('');
+}
+document.getElementById('q').addEventListener('input',e=>{q=e.target.value;render();});
+document.querySelectorAll('.chip').forEach(c=>c.onclick=()=>{document.querySelectorAll('.chip').forEach(x=>x.classList.remove('on'));c.classList.add('on');filter=c.dataset.f;render();});
+render();
+fetch('ibc_listings.json',{cache:'no-store'}).then(r=>r.json()).then(j=>{if(j.listings&&j.listings.length){DATA=j.listings;render();}}).catch(()=>{});
+</script>
+</body></html>

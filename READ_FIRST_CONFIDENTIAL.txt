@@ -1,0 +1,14 @@
+================================================================
+  CONFIDENTIAL — DO NOT PUBLISH THIS FOLDER PUBLICLY
+================================================================
+This folder (the Jarvis app) contains:
+  • your CLIENT NAMES and the matched opportunities (opportunities.json)
+  • your matching logic / synergy IP (jarvis_pipeline.py)
+  • and it reads your client master (KCM_IBC_Client_Master.xlsx)
+
+Deploy it ONLY in a PRIVATE GitHub repository, and serve jarvis.html
+to subscribers behind authentication. NEVER enable a public GitHub
+Pages site on this repo, and NEVER commit the client master to any
+public repo. The public-facing site lives in the separate
+"public-site" folder — that is the only part safe to publish.
+================================================================
